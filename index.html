@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Online Classroom — Quick Join Links</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{
+    --navy:#0b1f3a;
+    --navy-deep:#071328;
+    --gold:#c9a44c;
+    --gold-soft:#e8d9ae;
+    --paper:#f6f3ea;
+    --ink:#1c2430;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 20% -10%, rgba(201,164,76,0.10), transparent 45%),
+      linear-gradient(180deg, var(--navy-deep), var(--navy) 60%);
+    font-family: 'Georgia', 'Times New Roman', serif;
+    color: var(--paper);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 32px 16px;
+  }
+  .card{
+    width:100%;
+    max-width:520px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015));
+    border:1px solid rgba(201,164,76,0.35);
+    border-radius:4px;
+    padding:40px 36px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+  }
+  .eyebrow{
+    letter-spacing:0.28em;
+    text-transform:uppercase;
+    font-size:11px;
+    color: var(--gold);
+    font-family: 'Trebuchet MS', sans-serif;
+    margin-bottom:10px;
+  }
+  h1{
+    font-size:26px;
+    line-height:1.25;
+    margin:0 0 6px 0;
+    font-weight:400;
+    color:#fff;
+    border-bottom:1px solid rgba(201,164,76,0.3);
+    padding-bottom:18px;
+  }
+  .sub{
+    font-family:'Trebuchet MS', sans-serif;
+    font-size:13px;
+    color: rgba(246,243,234,0.6);
+    margin: 16px 0 26px 0;
+    line-height:1.6;
+  }
+  label{
+    display:block;
+    font-family:'Trebuchet MS', sans-serif;
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color: var(--gold-soft);
+    margin-bottom:8px;
+  }
+  input[type="text"]{
+    width:100%;
+    padding:12px 14px;
+    background: rgba(0,0,0,0.25);
+    border:1px solid rgba(201,164,76,0.4);
+    border-radius:2px;
+    color:#fff;
+    font-family:'Trebuchet MS', sans-serif;
+    font-size:15px;
+    outline:none;
+  }
+  input[type="text"]:focus{
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,164,76,0.15);
+  }
+  button{
+    margin-top:22px;
+    width:100%;
+    padding:14px;
+    background: var(--gold);
+    color: var(--navy-deep);
+    border:none;
+    border-radius:2px;
+    font-family:'Trebuchet MS', sans-serif;
+    font-weight:bold;
+    letter-spacing:0.08em;
+    text-transform:uppercase;
+    font-size:13px;
+    cursor:pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  button:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(201,164,76,0.25); }
+  button:disabled{ opacity:0.6; cursor:default; transform:none; box-shadow:none; }
+  .count{
+    margin-top:16px;
+    font-family:'Trebuchet MS', sans-serif;
+    font-size:12px;
+    color: rgba(246,243,234,0.45);
+    text-align:center;
+  }
+  .status{
+    margin-top:14px;
+    font-family:'Trebuchet MS', sans-serif;
+    font-size:12px;
+    text-align:center;
+    color: var(--gold-soft);
+    min-height:16px;
+  }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow">Online Classroom · 2026–2027</div>
+    <h1>Quick-Join Link Sheet</h1>
+    <p class="sub">Enter the name that should appear in your Zoom display, and this will build a single PDF with a ready-to-tap join link for every teacher's personal meeting room.</p>
+
+    <label for="uname">Display name</label>
+    <input type="text" id="uname" placeholder="e.g. Eldrick D'souza" autocomplete="off">
+
+    <button id="genBtn">Generate PDF</button>
+    <div class="status" id="status"></div>
+    <div class="count">37 teachers · IDs and passcodes from the 2026–2027 roster</div>
+  </div>
+
+<script>
+const teachers = [
+  {no:1, name:"Mr. Elias Coelho", id:"8175609385", pwd:"192024"},
+  {no:2, name:"Ms. Cheryl Colaco", id:"8018317533", pwd:"963509"},
+  {no:3, name:"Mr. Ryan Rodrigues", id:"4715422585", pwd:"123456"},
+  {no:4, name:"Ms. Sharon Tivade", id:"7420780257", pwd:"S@123"},
+  {no:5, name:"Ms. Swapna Nayak", id:"6358942711", pwd:"181978"},
+  {no:6, name:"Ms. Zeenat Surka", id:"5404899417", pwd:"h2um7q"},
+  {no:7, name:"Ms. Sakina Japanwala", id:"7372662267", pwd:"19112024"},
+  {no:8, name:"Mr. Sudhir A Singh", id:"3433298875", pwd:"Ayush2023#"},
+  {no:9, name:"Ms. Joan Dias", id:"5170742788", pwd:"274195"},
+  {no:10, name:"Ms. Sangita Upadhyay", id:"4638264628", pwd:"121212"},
+  {no:11, name:"Ms. Mona Soningra", id:"3399713965", pwd:"123456"},
+  {no:12, name:"Ms. Priscilla Pereira", id:"6893184283", pwd:"123456"},
+  {no:13, name:"Mr. Rushaad Dupetawalla", id:"4269315263", pwd:"400010"},
+  {no:14, name:"Mr. Sundeep Gaikwad", id:"3299017419", pwd:"987654"},
+  {no:15, name:"Mr. Alan Menezes", id:"2392999288", pwd:"196898"},
+  {no:16, name:"Mr. Stevence Pereira", id:"8738729999", pwd:"654321"},
+  {no:17, name:"Ms. Nandini Basu", id:"9983403638", pwd:"123456"},
+  {no:18, name:"Mr. Sabin Castelino", id:"8504456891", pwd:"1234"},
+  {no:19, name:"Ms. Sneha P. Fernandes", id:"8024972830", pwd:"654321"},
+  {no:20, name:"Ms. Nicola Pereira", id:"2654746263", pwd:"57932"},
+  {no:21, name:"Ms. Mystica Vaz D'Silva", id:"9181399770", pwd:"123456"},
+  {no:22, name:"Ms. Sherin Devassy", id:"4605383994", pwd:"SCV5NV"},
+  {no:23, name:"Mr. Jitendra R. Pandey", id:"9358612417", pwd:"19112024"},
+  {no:24, name:"Ms. Helen Faroz", id:"9369131966", pwd:"19112024"},
+  {no:26, name:"Mr. Rahul Kokate", id:"4895004210", pwd:"400010"},
+  {no:27, name:"Ms. Khushbu Jain", id:"6086064184", pwd:"1234"},
+  {no:28, name:"Ms. Lalin R. Devasahayam", id:"3852310403", pwd:"123456"},
+  {no:29, name:"Mr. Kileshwar Pandey", id:"7864070320", pwd:"1234"},
+  {no:30, name:"Ms. Diana P Chiramal", id:"6132596432", pwd:"1234"},
+  {no:31, name:"Mr. Shantanu Purohit", id:"9166648260", pwd:"sp@phy"},
+  {no:32, name:"Ms. Jesni Joseph", id:"4301714605", pwd:"1234"},
+  {no:33, name:"Mr. Samson Dias", id:"9388288305", pwd:"Musicclub"},
+  {no:34, name:"Ms. Kalpana Dcosta", id:"83319206877", pwd:"KALPANA"},
+  {no:35, name:"Ms. Mubasshira", id:"3620267682", pwd:"CwFEB1"},
+  {no:36, name:"Ms. Bona Lobo", id:"2723595309", pwd:"400010"},
+  {no:37, name:"Ms. Arjumand Ghogari", id:"9884223909", pwd:"arjumand07"},
+];
+
+function buildLink(id, pwd, uname){
+  return `zoommtg://zoom.us/join?confno=${id}&pwd=${encodeURIComponent(pwd)}&uname=${encodeURIComponent(uname)}`;
+}
+
+document.getElementById('genBtn').addEventListener('click', () => {
+  const statusEl = document.getElementById('status');
+  const uname = document.getElementById('uname').value.trim();
+  if(!uname){
+    statusEl.textContent = "Enter a display name first.";
+    return;
+  }
+
+  const btn = document.getElementById('genBtn');
+  btn.disabled = true;
+  statusEl.textContent = "Building PDF…";
+
+  try{
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: "pt", format: "a4" });
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const marginX = 42;
+    let y = 56;
+
+    const navy = [11, 31, 58];
+    const gold = [150, 118, 40];
+    const ink = [30, 35, 45];
+
+    function drawHeader(){
+      doc.setFillColor(...navy);
+      doc.rect(0, 0, pageWidth, 64, 'F');
+      doc.setTextColor(255,255,255);
+      doc.setFont("times", "bold");
+      doc.setFontSize(16);
+      doc.text("Online Classroom — Quick Join Links", marginX, 30);
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(9);
+      doc.setTextColor(230, 214, 170);
+      doc.text(`2026-2027  ·  Display name: ${uname}`, marginX, 46);
+      y = 90;
+    }
+
+    drawHeader();
+    doc.setTextColor(...ink);
+
+    teachers.forEach((t) => {
+      if(y > pageHeight - 110){
+        doc.addPage();
+        drawHeader();
+      }
+      const link = buildLink(t.id, t.pwd, uname);
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(...ink);
+      doc.text(`${t.no}.  ${t.name}`, marginX, y);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(8.5);
+      doc.setTextColor(90,90,90);
+      doc.text(`ID: ${t.id}   Passcode: ${t.pwd}`, marginX, y + 13);
+
+      doc.setFont("courier", "normal");
+      doc.setFontSize(7.5);
+      doc.setTextColor(...gold);
+      const maxWidth = pageWidth - marginX * 2;
+      const linkLines = doc.splitTextToSize(link, maxWidth);
+      let linkY = y + 26;
+      linkLines.forEach((line) => {
+        doc.textWithLink(line, marginX, linkY, { url: link });
+        linkY += 9;
+      });
+
+      doc.setDrawColor(220,220,220);
+      doc.line(marginX, linkY + 4, pageWidth - marginX, linkY + 4);
+
+      y = linkY + 22;
+    });
+
+    const safeName = uname.replace(/[^a-z0-9]+/gi, "_");
+    doc.save(`Zoom_Join_Links_${safeName}.pdf`);
+    statusEl.textContent = "PDF downloaded.";
+  } catch(err){
+    console.error(err);
+    statusEl.textContent = "Something went wrong generating the PDF.";
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>
